@@ -11,7 +11,7 @@ jobs:
       - name: Update apt and install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y libtinfo5 || sudo apt-get install -y libncurses5
+          sudo apt-get install -y libncurses-dev openjdk-11-jdk python3-pip python3-setuptools python3-dev build-essential libssl-dev libffi-dev libsqlite3-dev
 
       - name: Build APK
         uses: digreatbrian/buildozer-action@v2
