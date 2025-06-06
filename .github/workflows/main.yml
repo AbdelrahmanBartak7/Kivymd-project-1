@@ -18,29 +18,31 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: ⚙️ Install dependencies
+      - name: ⚙️ Install system dependencies
         run: |
           sudo apt update
           sudo apt install -y \
             python3-pip git zip unzip \
             openjdk-17-jdk \
             libffi-dev libssl-dev \
-            libncurses5 libncurses5-dev \
+            libncurses6 libncurses-dev \
             libsqlite3-dev libgdbm-dev \
             libbz2-dev libreadline-dev \
             liblzma-dev zlib1g-dev \
             libpython3-dev
 
+      - name: 📦 Install Python dependencies
+        run: |
           pip install --upgrade pip
           pip install buildozer cython
 
-      - name: 🔧 Initialize buildozer (if needed)
+      - name: 🔧 Initialize buildozer if needed
         run: |
           if [ ! -f "buildozer.spec" ]; then
             buildozer init
           fi
 
-      - name: 📦 Build APK
+      - name: 🛠 Build APK
         run: buildozer android debug
 
       - name: 📤 Upload APK
