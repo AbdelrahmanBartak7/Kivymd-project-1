@@ -1,77 +1,54 @@
+from typing import Union
+
+from kivy.lang import Builder
+
 from kivymd.app import MDApp
-from kivymd.uix.boxlayout import MDBoxLayout
-from kivymd.uix.screen import MDScreen
-from kivymd.uix.list import MDList, OneLineAvatarIconListItem, IRightBodyTouch
-from kivymd.uix.button import MDIconButton, MDFloatingActionButton
-from kivymd.uix.dialog import MDDialog
-from kivymd.uix.textfield import MDTextField
-from kivy.properties import StringProperty
-from kivy.uix.scrollview import ScrollView
+from kivymd.uix.pickers import MDColorPicker
+
+KV = '''
+MDScreen:
+
+    MDTopAppBar:
+        id: toolbar
+        title: "MDTopAppBar"
+        pos_hint: {"top": 1}
+
+    MDRaisedButton:
+        text: "OPEN PICKER"
+        pos_hint: {"center_x": .5, "center_y": .5}
+        md_bg_color: toolbar.md_bg_color
+        on_release: app.open_color_picker()
+'''
 
 
-class TaskItem(OneLineAvatarIconListItem):
-    text = StringProperty()
-
-    def __init__(self, task_text, delete_callback, **kwargs):
-        super().__init__(**kwargs)
-        self.text = task_text
-        self.delete_callback = delete_callback
-
-        self.right_icon = MDIconButton(icon="delete", on_release=self.delete_task)
-        self.add_widget(self.right_icon)
-
-    def delete_task(self, *args):
-        self.delete_callback(self)
-
-
-class ToDoApp(MDApp):
+class MyApp(MDApp):
     def build(self):
-        self.title = "To-Do List"
-        self.theme_cls.primary_palette = "DeepPurple"
-        self.theme_cls.theme_style = "Light"
+        return Builder.load_string(KV)
 
-        self.screen = MDScreen()
-
-        self.task_list = MDList()
-        scroll = ScrollView()
-        scroll.add_widget(self.task_list)
-        self.screen.add_widget(scroll)
-
-        self.add_task_button = MDFloatingActionButton(
-            icon="plus",
-            pos_hint={"center_x": 0.9, "center_y": 0.1},
-            on_release=self.show_add_task_dialog,
+    def open_color_picker(self):
+        color_picker = MDColorPicker(size_hint=(0.45, 0.85))
+        color_picker.open()
+        color_picker.bind(
+            on_select_color=self.on_select_color,
+            on_release=self.get_selected_color,
         )
-        self.screen.add_widget(self.add_task_button)
 
-        return self.screen
+    def update_color(self, color: list) -> None:
+        self.root.ids.toolbar.md_bg_color = color
 
-    def show_add_task_dialog(self, *args):
-        self.task_input = MDTextField(hint_text="Enter Task : ")
-        self.dialog = MDDialog(
-            title="Add",
-            type="custom",
-            content_cls=self.task_input,
-            buttons=[
-                MDIconButton(icon="check", on_release=self.add_task),
-                MDIconButton(icon="close", on_release=self.close_dialog),
-            ],
-        )
-        self.dialog.open()
+    def get_selected_color(
+        self,
+        instance_color_picker: MDColorPicker,
+        type_color: str,
+        selected_color: Union[list, str],
+    ):
+        '''Return selected color.'''
 
-    def close_dialog(self, *args):
-        self.dialog.dismiss()
+        print(f"Selected color is {selected_color}")
+        self.update_color(selected_color[:-1] + [1])
 
-    def add_task(self, *args):
-        task_text = self.task_input.text.strip()
-        if task_text:
-            item = TaskItem(task_text, delete_callback=self.remove_task)
-            self.task_list.add_widget(item)
-        self.close_dialog()
-
-    def remove_task(self, task_widget):
-        self.task_list.remove_widget(task_widget)
+    def on_select_color(self, instance_gradient_tab, color: list) -> None:
+        '''Called when a gradient image is clicked.'''
 
 
-if __name__ == '__main__':
-    ToDoApp().run()
+MyApp().run()
