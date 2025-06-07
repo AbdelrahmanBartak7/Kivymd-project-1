@@ -44,7 +44,7 @@ requirements = python3,kivy,kivymd,typing
 # requirements.source.kivy = ../../kivy
 
 # (str) Presplash of the application
-presplash.filename = %(source.dir)s/color-picker.png
+presplash.filename = %(source.dir)s/color-pickersp.png
 
 # (str) Icon of the application
 icon.filename = %(source.dir)s/color-picker.png
