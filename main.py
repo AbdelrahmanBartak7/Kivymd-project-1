@@ -1,254 +1,106 @@
 from kivy.lang import Builder
-from kivymd.app import MDApp
 from kivy.properties import StringProperty
-from kivy.metrics import dp
-from kivy.clock import Clock
-Clock.schedule_once(lambda dt: None, 0)
+from kivy.core.clipboard import Clipboard
 
-KV = '''
-MDBoxLayout:
-    orientation: 'vertical'
-    padding: dp(10)
-    spacing: dp(10)
-    md_bg_color: app.theme_cls.bg_dark
+from kivymd.icon_definitions import md_icons
+from kivymd.uix.screen import MDScreen
+from kivymd.app import MDApp
+from kivymd.uix.list import MDListItem
 
-    MDLabel:
-        id: display
-        text: app.display_text
-        font_size: dp(40)
-        halign: 'right'
-        valign: 'bottom'
-        size_hint_y: None
-        height: dp(100)
-        theme_text_color: 'Custom'
-        text_color: 1, 1, 1, 1
-        bold: True
-        padding: dp(10), dp(10)
+Builder.load_string(
+    '''
+#:import images_path kivymd.images_path
 
-    MDGridLayout:
-        cols: 4
+
+<IconItem>
+
+    MDListItemLeadingIcon:
+        icon: root.icon
+
+    MDListItemSupportingText:
+        text: root.text
+
+
+<PreviousMDIcons>
+    md_bg_color: self.theme_cls.backgroundColor
+
+    MDBoxLayout:
+        orientation: 'vertical'
         spacing: dp(10)
-        padding: dp(5)
-        size_hint_y: None
-        height: self.minimum_height
+        padding: dp(20)
 
-        # الصف الأول
-        MDRaisedButton:
-            text: 'C'
-            on_release: app.clear()
-            md_bg_color: .9, .1, .1, 1
-            text_color: 1, 1, 1, 1
-            font_size: dp(24)
-            size_hint: None, None
-            size: dp(70), dp(70)
+        MDBoxLayout:
+            adaptive_height: True
 
-        MDRaisedButton:
-            text: '('
-            on_release: app.append_text('(')
-            md_bg_color: .2, .2, .2, 1
-            text_color: 1, 1, 1, 1
-            font_size: dp(24)
-            size_hint: None, None
-            size: dp(70), dp(70)
+            MDIconButton:
+                icon: 'magnify'
+                pos_hint: {'center_y': .5}
 
-        MDRaisedButton:
-            text: ')'
-            on_release: app.append_text(')')
-            md_bg_color: .2, .2, .2, 1
-            text_color: 1, 1, 1, 1
-            font_size: dp(24)
-            size_hint: None, None
-            size: dp(70), dp(70)
+            MDTextField:
+                id: search_field
+                hint_text: 'Search icon'
+                on_text: root.set_list_md_icons(self.text, True)
+                radius: [30, 20, 20, 30]
 
-        MDRaisedButton:
-            text: '/'
-            on_release: app.append_text('/')
-            md_bg_color: .9, .6, .1, 1
-            text_color: 1, 1, 1, 1
-            font_size: dp(24)
-            size_hint: None, None
-            size: dp(70), dp(70)
+        RecycleView:
+            id: rv
+            key_viewclass: 'viewclass'
+            key_size: 'height'
 
-        # الصف الثاني
-        MDRaisedButton:
-            text: '7'
-            on_release: app.append_text('7')
-            md_bg_color: .2, .2, .2, 1
-            text_color: 1, 1, 1, 1
-            font_size: dp(24)
-            size_hint: None, None
-            size: dp(70), dp(70)
-
-        MDRaisedButton:
-            text: '8'
-            on_release: app.append_text('8')
-            md_bg_color: .2, .2, .2, 1
-            text_color: 1, 1, 1, 1
-            font_size: dp(24)
-            size_hint: None, None
-            size: dp(70), dp(70)
-
-        MDRaisedButton:
-            text: '9'
-            on_release: app.append_text('9')
-            md_bg_color: .2, .2, .2, 1
-            text_color: 1, 1, 1, 1
-            font_size: dp(24)
-            size_hint: None, None
-            size: dp(70), dp(70)
-
-        MDRaisedButton:
-            text: '*'
-            on_release: app.append_text('*')
-            md_bg_color: .9, .6, .1, 1
-            text_color: 1, 1, 1, 1
-            font_size: dp(24)
-            size_hint: None, None
-            size: dp(70), dp(70)
-
-        # الصف الثالث
-        MDRaisedButton:
-            text: '4'
-            on_release: app.append_text('4')
-            md_bg_color: .2, .2, .2, 1
-            text_color: 1, 1, 1, 1
-            font_size: dp(24)
-            size_hint: None, None
-            size: dp(70), dp(70)
-
-        MDRaisedButton:
-            text: '5'
-            on_release: app.append_text('5')
-            md_bg_color: .2, .2, .2, 1
-            text_color: 1, 1, 1, 1
-            font_size: dp(24)
-            size_hint: None, None
-            size: dp(70), dp(70)
-
-        MDRaisedButton:
-            text: '6'
-            on_release: app.append_text('6')
-            md_bg_color: .2, .2, .2, 1
-            text_color: 1, 1, 1, 1
-            font_size: dp(24)
-            size_hint: None, None
-            size: dp(70), dp(70)
-
-        MDRaisedButton:
-            text: '-'
-            on_release: app.append_text('-')
-            md_bg_color: .9, .6, .1, 1
-            text_color: 1, 1, 1, 1
-            font_size: dp(24)
-            size_hint: None, None
-            size: dp(70), dp(70)
-
-        # الصف الرابع
-        MDRaisedButton:
-            text: '1'
-            on_release: app.append_text('1')
-            md_bg_color: .2, .2, .2, 1
-            text_color: 1, 1, 1, 1
-            font_size: dp(24)
-            size_hint: None, None
-            size: dp(70), dp(70)
-
-        MDRaisedButton:
-            text: '2'
-            on_release: app.append_text('2')
-            md_bg_color: .2, .2, .2, 1
-            text_color: 1, 1, 1, 1
-            font_size: dp(24)
-            size_hint: None, None
-            size: dp(70), dp(70)
-
-        MDRaisedButton:
-            text: '3'
-            on_release: app.append_text('3')
-            md_bg_color: .2, .2, .2, 1
-            text_color: 1, 1, 1, 1
-            font_size: dp(24)
-            size_hint: None, None
-            size: dp(70), dp(70)
-
-        MDRaisedButton:
-            text: '+'
-            on_release: app.append_text('+')
-            md_bg_color: .9, .6, .1, 1
-            text_color: 1, 1, 1, 1
-            font_size: dp(24)
-            size_hint: None, None
-            size: dp(70), dp(70)
-
-        # الصف الخامس
-        MDRaisedButton:
-            text: '0'
-            on_release: app.append_text('0')
-            md_bg_color: .2, .2, .2, 1
-            text_color: 1, 1, 1, 1
-            font_size: dp(24)
-            size_hint: None, None
-            size: dp(150), dp(70)  # زر أوسع للصفر
-
-        MDRaisedButton:
-            text: '.'
-            on_release: app.append_text('.')
-            md_bg_color: .2, .2, .2, 1
-            text_color: 1, 1, 1, 1
-            font_size: dp(24)
-            size_hint: None, None
-            size: dp(70), dp(70)
-
-        MDRaisedButton:
-            text: 'D'
-            on_release: app.backspace()
-            md_bg_color: .5, .5, .5, 1
-            text_color: 1, 1, 1, 1
-            font_size: dp(24)
-            size_hint: None, None
-            size: dp(70), dp(70)
-
-        MDRaisedButton:
-            text: '='
-            on_release: app.calculate()
-            md_bg_color: .1, .5, .8, 1
-            text_color: 1, 1, 1, 1
-            font_size: dp(24)
-            size_hint: None, None
-            size: dp(70), dp(70)
+            RecycleBoxLayout:
+                padding: dp(10), dp(10), 0, dp(10)
+                default_size: None, dp(48)
+                default_size_hint: 1, None
+                size_hint_y: None
+                height: self.minimum_height
+                orientation: 'vertical'
 '''
+)
 
 
-class CalculatorApp(MDApp):
-    display_text = StringProperty('0')
+class IconItem(MDListItem):
+    icon = StringProperty()
+    text = StringProperty()
+
+    def on_release(self):
+        Clipboard.copy(self.text)
+        from kivymd.toast import toast
+        toast(f"Copied '{self.text}' to clipboard")
+
+
+class PreviousMDIcons(MDScreen):
+    def set_list_md_icons(self, text="", search=False):
+        '''Builds a list of icons for the screen MDIcons.'''
+
+        def add_icon_item(name_icon):
+            self.ids.rv.data.append(
+                {
+                    "viewclass": "IconItem",
+                    "icon": name_icon,
+                    "text": name_icon,
+                    "callback": lambda x: x,
+                }
+            )
+
+        self.ids.rv.data = []
+        for name_icon in md_icons.keys():
+            if search:
+                if text in name_icon:
+                    add_icon_item(name_icon)
+            else:
+                add_icon_item(name_icon)
+
+
+class MainApp(MDApp):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.screen = PreviousMDIcons()
 
     def build(self):
-        self.theme_cls.theme_style = "Dark"
-        self.theme_cls.primary_palette = "Orange"
-        return Builder.load_string(KV)
+        return self.screen
 
-    def append_text(self, text):
-        if self.display_text == '0' and text not in '+-*/':
-            self.display_text = text
-        else:
-            self.display_text += text
-
-    def clear(self):
-        self.display_text = '0'
-
-    def backspace(self):
-        if len(self.display_text) == 1:
-            self.display_text = '0'
-        else:
-            self.display_text = self.display_text[:-1]
-
-    def calculate(self):
-        try:
-            result = str(eval(self.display_text))
-            self.display_text = result
-        except Exception as e:
-            self.display_text = 'Error'
+    def on_start(self):
+        self.screen.set_list_md_icons()
 
 
-if __name__ == '__main__':
-    CalculatorApp().run()
+MainApp().run()
