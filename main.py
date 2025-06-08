@@ -2,13 +2,10 @@ from kivy.lang import Builder
 from kivymd.app import MDApp
 from kivy.core.window import Window
 from kivy.properties import StringProperty
-from kivy.config import Config
 from kivy.clock import Clock
 Clock.schedule_once(lambda dt: None, 0)
-Config.set('kivy', 'show_splash_screen', '0')  # تعطيل شاشة البداية
 
-# يمكنك ضبط حجم النافذة لتناسب الآلة الحاسبة
-Window.size = (350, 550)
+
 
 KV = '''
 MDBoxLayout:
