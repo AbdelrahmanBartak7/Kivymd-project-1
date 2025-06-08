@@ -1,10 +1,10 @@
 [app]
 
 # (str) Title of your application
-title = Calculator Pro
+title = MDIcons
 
 # (str) Package name
-package.name = calculatorpro
+package.name = mdicons
 
 # (str) Package domain (needed for android/ios packaging)
 package.domain = org.manapps.dev
